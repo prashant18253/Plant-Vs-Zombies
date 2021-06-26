@@ -7,13 +7,10 @@ import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 import javafx.animation.TranslateTransition;
-import javafx.animation.Animation;
-import javafx.animation.Interpolator;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
-import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -29,76 +26,18 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.ColumnConstraints;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.RowConstraints;
-class Plant
-{
-	float health;
-	Plant()
-	{
-		health=5;
-	}
-}
-class level
-{
-	
-	int numofzombie;
-	int num;
-	int point;
-	level(int numofzombie,int num)
-	{
-		this.numofzombie=numofzombie;
-		this.num=num;
-		point=50;
-	}
-}
-class Zombie
-{
-	double health;
-	int zombierunner;
-	Zombie()
-	{
-		health=4;
-	}
-}
-class PeaShooter extends Plant
-{
-	
-}
-class Sunflower extends Plant
-{
-	
-}
-class Wallnut extends Plant
-{
-	
-}
-class PotatoMine extends Plant
-{
-	
-}
-class Player
-{
-	
-}
-class Game
-{
-	
-}
-public class Main extends Application {
-	TranslateTransition[] translate = new TranslateTransition[20];
 
-	level l=null;
-	int w=0;
-	int min=100,count=0;
-	Boolean p=true;
+public class Main extends Application {
 	TextField name;
-	int zombierunner=0;
 	Label tester=null;
 	Label sunpoint;
-	int sunpoints = 50;
+	int sunpoints = 0;
 	GridPane gridpane = null;
+	//ImageView sunview=null;
 	int countzombie=0;
 	Button sunflower,peashooter=null,wallnut=null,potatomine=null;
 	Timeline[][] forpea=new Timeline[5][9];	
+	double[] zombieviewy=new double[10];
 	ImageView peaview=new ImageView();
 	ImageView sunfromplant=new ImageView();
 	int q=0;
@@ -169,61 +108,12 @@ public class Main extends Application {
 									Stage window =(Stage)(((Node) event.getSource()).getScene().getWindow());
 									window.setScene(levels);
 									window.show();
+									level2.setDisable(true); level3.setDisable(true);level4.setDisable(true);level5.setDisable(true);
 									level1.setOnAction(new EventHandler<ActionEvent>() {
 										@Override
 										public void handle(ActionEvent events) {
 											try {
-												l=new level(5,1);
-												level1(primaryStage,l);
-												
-											} catch (FileNotFoundException e) {
-												e.printStackTrace();
-											}
-										}
-									});
-									level2.setOnAction(new EventHandler<ActionEvent>() {
-										@Override
-										public void handle(ActionEvent events) {
-											try {
-												l=new level(8,2);
-												level1(primaryStage,l);
-												
-											} catch (FileNotFoundException e) {
-												e.printStackTrace();
-											}
-										}
-									});
-									level3.setOnAction(new EventHandler<ActionEvent>() {
-										@Override
-										public void handle(ActionEvent events) {
-											try {
-												l=new level(12,3);
-												level1(primaryStage,l);
-												
-											} catch (FileNotFoundException e) {
-												e.printStackTrace();
-											}
-										}
-									});
-									level4.setOnAction(new EventHandler<ActionEvent>() {
-										@Override
-										public void handle(ActionEvent events) {
-											try {
-												l=new level(15,4);
-												level1(primaryStage,l);
-												
-											} catch (FileNotFoundException e) {
-												e.printStackTrace();
-											}
-										}
-									});
-									level5.setOnAction(new EventHandler<ActionEvent>() {
-										@Override
-										public void handle(ActionEvent events) {
-											try {
-												l=new level(17,5);
-												level1(primaryStage,l);
-												
+												level1(primaryStage);
 											} catch (FileNotFoundException e) {
 												e.printStackTrace();
 											}
@@ -319,10 +209,9 @@ public class Main extends Application {
 		{
 		}
 	}
-	public void level1(Stage stage, level l) throws FileNotFoundException
+	public void level1(Stage stage) throws FileNotFoundException
 	{
-		Plant[][] plants=new Plant[5][9]; 
-		int[] zombieviewy=new int[l.numofzombie];
+		
 		class helper extends TimerTask
 		{
 			Button x;
@@ -335,9 +224,7 @@ public class Main extends Application {
 				x.setDisable(false);
 			}
 		}
-		sunpoint=new Label();
-		TranslateTransition[] translatezombie=new TranslateTransition[l.numofzombie];
-		Zombie[] z=new Zombie[l.numofzombie];
+		
 		AnchorPane root=new AnchorPane();
 		Scene scene=new Scene(root,1000,540);
 		ImageView sunview=new ImageView(new Image(new FileInputStream("sun.png")));;
@@ -345,20 +232,14 @@ public class Main extends Application {
 		Image image,shovelimage,menuimage,sunflowericon,peashootericon,wallnuticon,potatomineicon;
 		ImageView imageview=null,menuview=null,sunflowerview=null,peashooterview=null,wallnutview=null,potatomineview=null,scoreview=null,gameprogress=null;
 		Button timerbutton=null;
-		Timeline t5;
 		ImageView[] lawnmover=new ImageView[5];
 		ImageView[][] images=new ImageView[5][9];
 		ImageView[][] smallimages=new ImageView[5][9];
-		ImageView[] zombieview=new ImageView[l.numofzombie];
-		for(int i=0;i<l.numofzombie;i++)
-		{
+		ImageView[] zombieview=new ImageView[10];
+		for(int i=0;i<9;i++)
 			zombieview[i]=new ImageView();
-			translatezombie[i]=new TranslateTransition();
-		}
-		sunpoint.setText(String.valueOf(l.point));
-
 ////////////////////////////////////////////////////////////////////////////////////////////////
-		Timeline t=new Timeline(new KeyFrame(Duration.seconds(10), new EventHandler<ActionEvent>() {
+		Timeline t=new Timeline(new KeyFrame(Duration.seconds(20), new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				try
@@ -390,98 +271,47 @@ public class Main extends Application {
 				sunpoint.setText(String.valueOf(sunpoints));
 			}
 		});
-		l.point=sunpoints;
+		
 		t.setCycleCount(t.INDEFINITE);
 		t.play();
-
 ////////////////////////////////////////////////////////////////////////////////////////////////	
 		Timeline t1=new Timeline(new KeyFrame(Duration.seconds(25), new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent event) {
 				try
-				{ 
-					z[0]=new Zombie();
-					z[0].zombierunner=countzombie;
-					zombieview[countzombie].setImage(new Image(new FileInputStream("zombie_normal.gif")));
+				{
+					zombieview[countzombie].setImage(new Image(new FileInputStream("zombie_normal.gif")));;
 					Random rand=new Random();
 					int randomy=rand.nextInt(5)+1;
-					//System.out.println(randomy);
-					zombieview[countzombie].setLayoutY(((randomy-1)*100)+80);
+					zombieview[countzombie].setLayoutY(randomy*100);
 					zombieviewy[countzombie]=randomy*100;
-					zombieview[countzombie].setFitHeight(100); 	zombieview[countzombie].setFitWidth(100);
-					translatezombie[countzombie].setInterpolator(Interpolator.LINEAR);
-					translatezombie[countzombie].setFromX(890);
-					translatezombie[countzombie].setByX(-700);
-					translatezombie[countzombie].setRate(.01);
-					translatezombie[countzombie].setCycleCount(1);
-					translatezombie[countzombie].setNode(zombieview[countzombie]);
-					translatezombie[countzombie].play();
-					//zombierunner=countzombie;
-/////////////////////////////////////////////////////////////////////////////////////////////////////////
-					
-					//zombierunner++;
-////////////////////////////////////////////////////////////////////////////////////////////////////////
-					
+					zombieview[countzombie].setFitHeight(80); 	zombieview[countzombie].setFitWidth(100);
+					TranslateTransition translate=new TranslateTransition();
+					translate.setFromX(890);
+					translate.setByX(-600);
+					translate.setDuration(Duration.millis(20000));
+					translate.setCycleCount(1);
+					translate.setNode(zombieview[countzombie]);
+					translate.play();
 					countzombie++;
-					zombierunner++;
-					//gridpane.getChildren().add(zombieview[countzombie-1]);
+					if(countzombie==10)
+							translate=null;
 					root.getChildren().add(zombieview[countzombie-1]);
 				}
-				catch(Exception e) {}
+				catch(Exception e) {	}
 			}
 		}));
-		t1.setCycleCount(l.numofzombie);
+		
+		t1.setCycleCount(t1.INDEFINITE);
 		t1.play();
-		
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
-		
-		t5=new Timeline(new KeyFrame(Duration.seconds(0.5),new EventHandler<ActionEvent>() {
-			
-			@Override
-			public void handle(ActionEvent event) {
-				//int abcd;
-				for(int k=0;k<l.numofzombie;k++)
-				{
-					if(zombieview[k].getImage()!=null)
-					{
-						int j=(zombieviewy[k]/100)-1;
-						for(int i=0;i<9;i++)
-						{
-							//System.out.println);
-							System.out.println(k+" "+(zombieview[k].getTranslateX())+" "+images[j][i].getLayoutX());
-
-							if(images[j][i].getImage()!=null &&((zombieview[k].getTranslateX()+160 )<(images[j][i].getLayoutX())))
-							{ 
-								//abcd=i;
-								//System.out.println(abcd+" "+j);
-								//System.out.println(k+" "+(zombieview[k].getTranslateX())+" "+images[j][i].getLayoutX());
-								translatezombie[k].pause();
-								/*plants[j][i].health--;
-								System.out.println(plants[j][i].health);
-								if(plants[j][i].health==0)
-								{
-									images[j][i].setImage(null);
-									translatezombie[k].play();
-								}*/
-								
-							}
-						}
-					}
-				}
-			}
-			
-		}));
-		t5.setCycleCount(t5.INDEFINITE);
-		t5.play();
-		
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 		Button shovel=null,menu=null;
 		try
 		{
 			image =new Image(new FileInputStream("lawn1.png"));
 			imageview=new ImageView(image);
 			imageview.setFitHeight(600); 	imageview.setFitWidth(1000);
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////////////////////
 			menuimage=new Image(new FileInputStream("button_menu.png"));
 			menuview=new ImageView(menuimage);
 			menu=new Button();
@@ -490,25 +320,22 @@ public class Main extends Application {
 			menu.setOnAction(new EventHandler<ActionEvent>() {
 				@Override
 				public void handle(ActionEvent Event) {
-					
 					Stage stage1=new Stage();
 					AnchorPane root=new AnchorPane();
 					try {
 						ImageView screen1=new ImageView(new Image(new FileInputStream("first_screen.jpg")));
 						screen1.setFitHeight(600); 	screen1.setFitWidth(600);
+						
 						Button save =new Button();
 						save.setLayoutX(200); 	save.setLayoutY(100);
 						save.setPrefSize(100,70);
 						save.setGraphic(new ImageView(new Image(new FileInputStream("button_save.png"))));
 						save.setOnAction(e->{
-							t1.stop();
-							//translatezombie.pause();
-							t.stop();
 						});
 						
 						Button Exit =new Button();
 						Exit.setGraphic(new ImageView(new Image(new FileInputStream("button_exit.png"))));
-						Exit.setOnAction(e->{translatezombie[0].play();/*System.exit(0);*/});
+						Exit.setOnAction(e->{System.exit(0);});
 						Exit.setLayoutX(230); 	Exit.setLayoutY(200);
 						Exit.setPrefSize(100,70);
 						
@@ -519,12 +346,14 @@ public class Main extends Application {
 							stage1.close();
 						});
 						mainmenu.setLayoutX(230); 	mainmenu.setLayoutY(300);
+						mainmenu.setPrefSize(100,70);
 						
-						mainmenu.setPrefSize(100,70);	
 						root.getChildren().addAll(screen1,save,Exit,mainmenu);
 					} catch (FileNotFoundException e) {
+						// TODO Auto-generated catch block
 						e.printStackTrace();
-					}	
+					}
+					
 					Scene scene1=new Scene(root,600,600);
 					stage1.setScene(scene1);
 					stage1.show();
@@ -548,6 +377,7 @@ public class Main extends Application {
 		            rowConst.setPrefHeight(100);
 		            gridpane.getRowConstraints().add(rowConst);       
 		        }
+			 
 			for(int i=0;i<5;i++)
 			{
 				for(int j=1;j<10;j++)
@@ -557,7 +387,7 @@ public class Main extends Application {
 					smallimages[i][j-1].setFitHeight(70); 	smallimages[i][j-1].setFitWidth(70);
 					images[i][j-1].setFitHeight(100); 	images[i][j-1].setFitWidth(80);
 					gridpane.add(images[i][j-1],j, i);
-					//System.out.println(images[i][j-1].getX()+" "+images[i][j-1].getY());
+					
 				}
 			}	
 			for(int i=0;i<5;i++)
@@ -573,230 +403,124 @@ public class Main extends Application {
 			shovel=new Button();
 			shovel.setLayoutX(290); 	shovel.setLayoutY(15);
 			shovel.setMaxSize(33, 29);
-			shovel.setGraphic(shovelview);
-			shovel.setOnMouseReleased(new EventHandler<MouseEvent>() {
-				@Override
-				public void handle(MouseEvent event)
-				{
-					int x=(int) ((event.getSceneX()-160)/80);
-					int y=(int) ((event.getSceneY()-80)/100);
-					if(images[y][x-1].getImage()==null)
-					{
-						tester.setText("no plant on the block");
-						
-					}
-					else
-					{
-						images[y][x-1].setImage(null);
-					}
-				}
-			});
+			shovel.setGraphic(shovelview);	
 ////////////////////////////////////////////////////////////////////////////////////////////////
-
+			
 			sunflowericon =new Image(new FileInputStream("sunflowericon.png"));
 			sunflowerview=new ImageView(sunflowericon);
 			sunflower=new Button();
 			sunflower.setGraphic(sunflowerview);
 			sunflower.setLayoutX(14); 		sunflower.setLayoutY(14);
 			sunflowerview.setFitHeight(56); 	sunflowerview.setFitWidth(77);
-			sunflower.setOnAction(e->{});
-			//System.out.println(l.num+" "+l.numofzombie);
-
-			//if(l.point>50)
-			{
-				sunflower.setOnMouseReleased(new EventHandler<MouseEvent>() {
-					@Override
-					public void handle(MouseEvent event) {
-						int x=(int) ((event.getSceneX()-160)/80);
-						int y=(int) ((event.getSceneY()-80)/100);
-						try {
-							if(images[y][x-1].getImage()==null)
-							{	
-								
-								//System.out.println((images[y][x-1].getLayoutY()+100)+" "+(images[y][x-1].getLayoutX()+160));
-								//System.out.println(images[y][x-1].getLayoutY()+" "+images[y][x-1].getLayoutX());
-							images[y][x-1].setImage(new Image(new FileInputStream("sun_flower.gif")));
-							images[y][x-1].setFitHeight(70);
-							sunflower.setDisable(true);
-							TimerTask tasknew =new helper(sunflower);
-							Timer timer=new Timer();
-							timer.schedule(tasknew,7000,17000);
-							forpea[y][x-1]=new Timeline(new KeyFrame(Duration.seconds(10), new EventHandler<ActionEvent>() {
-								@Override
-								public void handle(ActionEvent event) {
-									try
-									{
-										Image im=new Image(new FileInputStream("sun.png"));
-										//tester.setText(null);
-										smallimages[y][x-1].setImage(im);
-										smallimages[y][x-1].setVisible(true);
-										smallimages[y][x-1].setFitHeight(70); 	smallimages[y][x-1].setFitWidth(70);
-										smallimages[y][x-1].setImage(im);
-										smallimages[y][x-1].setLayoutY(images[y][x-1].getLayoutY()+100);
-										smallimages[y][x-1].setLayoutX(images[y][x-1].getLayoutX()+160);
-										smallimages[y][x-1].addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
-											@Override
-											public void handle(MouseEvent event) {
-												smallimages[y][x-1].setVisible(false);
-												sunpoints+=50;
-												sunpoint.setText(String.valueOf(sunpoints));
-											}
-										});
-									}
-									catch(Exception e) { 	}
+			sunflower.setOnMouseReleased(new EventHandler<MouseEvent>() {
+				@Override
+				public void handle(MouseEvent event) {
+					int x=(int) ((event.getSceneX()-160)/80);
+					int y=(int) ((event.getSceneY()-80)/100);
+					try {
+						images[y][x-1].setImage(new Image(new FileInputStream("sun_flower.gif")));
+						images[y][x-1].setFitHeight(70);
+						sunflower.setDisable(true);
+						TimerTask tasknew =new helper(sunflower);
+						Timer timer=new Timer();
+						timer.schedule(tasknew,7000,17000);
+						forpea[y][x-1]=new Timeline(new KeyFrame(Duration.seconds(10), new EventHandler<ActionEvent>() {
+							@Override
+							public void handle(ActionEvent event) {
+								try
+								{
+									Image im=new Image(new FileInputStream("sun.png"));
+									//tester.setText(null);
+									smallimages[y][x-1].setImage(im);
+									smallimages[y][x-1].setVisible(true);
+									smallimages[y][x-1].setFitHeight(70); 	smallimages[y][x-1].setFitWidth(70);
+									smallimages[y][x-1].setImage(im);
+									smallimages[y][x-1].setLayoutY(images[y][x-1].getLayoutY()+100);
+									smallimages[y][x-1].setLayoutX(images[y][x-1].getLayoutX()+160);
+									smallimages[y][x-1].addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+										@Override
+										public void handle(MouseEvent event) {
+											smallimages[y][x-1].setVisible(false);
+											sunpoints+=50;
+											sunpoint.setText(String.valueOf(sunpoints));
+										}
+									});
 								}
-							}));
-							forpea[y][x-1].setCycleCount(forpea[y][x-1].INDEFINITE);
-							forpea[y][x-1].play();
+								catch(Exception e) {	}
 							}
-							else 
-							{
-								tester.setText("A plant is already planted");
-							}
-						}
-						catch(ArrayIndexOutOfBoundsException e)
-						{
-							tester.setText("plant cannot be put here");
-						}
-						catch (FileNotFoundException e) {
-							e.printStackTrace();
-						}
-					}	
-				});
-			}
-
-
-			if(l.num==1)
-			{
-				sunflower.setVisible(false);
-				//sunflower.setDisable(true);
-			}
+						}));
+						forpea[y][x-1].setCycleCount(forpea[y][x-1].INDEFINITE);
+						forpea[y][x-1].play();
+					}
+					catch(ArrayIndexOutOfBoundsException e)
+					{
+						tester.setText("plant cannot be put here");
+					}
+					catch (FileNotFoundException e) {
+						e.printStackTrace();
+					}
+					
+				}	
+			});
 ////////////////////////////////////////////////////////////////////////////////////////////////
 			peashootericon =new Image(new FileInputStream("peashootericon.png"));
 			peashooterview=new ImageView(peashootericon);
 			peashooter=new Button();
-			peashooter.setOnAction(e->{});
 			peashooter.setGraphic(peashooterview);
 			peashooter.setLayoutX(14); 		peashooter.setLayoutY(86);
 			peashooterview.setFitHeight(56); 	peashooterview.setFitWidth(77);	
 			peashooter.setOnMouseReleased(new EventHandler<MouseEvent>() {
 				@Override
 				public void handle(MouseEvent event) {
-					System.out.println(sunpoints);
-					if(sunpoints>=100)
-					{
-						sunpoints=sunpoints-100;
-						sunpoint.setText(String.valueOf(sunpoints));
-						int x=(int) ((event.getSceneX()-160)/80);
-						int y=(int) ((event.getSceneY()-80)/100);
-						try {
-							if(images[y][x-1].getImage()==null)
-							{
-								plants[y][x-1]=new Plant();
-								//System.out.println(images[y][x-1].getLayoutY()+" "+images[y][x-1].getLayoutX());
-
-							Image i=new Image(new FileInputStream("pea_shooter.gif"));
-							images[y][x-1].setImage(i);
-							images[y][x-1].setFitHeight(70);
-							peashooter.setDisable(true);
-							TimerTask tasknew =new helper(peashooter);
-							Timer timer=new Timer();
-							timer.schedule(tasknew,7000,17000);
-							
-							forpea[y][x-1]=new Timeline(new KeyFrame(Duration.seconds(2), new EventHandler<ActionEvent>() {
-								@Override
-								public void handle(ActionEvent event) {
-									try
-									{									
-										p=true;
-										w=0;
-										while(w<l.numofzombie)
-										{
-											if(zombieview[w].getImage()!=null &&( (int)(zombieviewy[w]/100)-1)==y&& zombieview[w].getTranslateX()!=190)
-											{
-												p=false;//
-												Image im=new Image(new FileInputStream("Pea.png"));
-												smallimages[y][x-1].setImage(im);
-												smallimages[y][x-1].setFitHeight(30); 	smallimages[y][x-1].setFitWidth(30);
-												Random rand=new Random();
-												//int xy=rand.nextInt(200)+400;
-												smallimages[y][x-1].setImage(im);
-												smallimages[y][x-1].setLayoutY(images[y][x-1].getLayoutY()+80);
-												translate[w]=new TranslateTransition();
-												//translate.
-												translate[w].setRate(0.2);
-												translate[w].setInterpolator(Interpolator.LINEAR);
-												//System.out.println((images[y][x-1].getLayoutX()+240)+" "+(zombieview[w].getTranslateX()));
-												translate[w].setFromX(images[y][x-1].getLayoutX()+240);
-												translate[w].setByX(zombieview[w].getTranslateX()-320);
-												//System.out.println("hell" +smallimages[y][x-1].getTranslateX()+" "+zombieview[w].getTranslateX());
-												/*if(Math.abs(smallimages[y][x-1].getTranslateX()+20-zombieview[w].getTranslateX())<100)
-												{
-													
-													System.out.println("true "+z[w].health);
-													z[w].health--;
-													if(z[w].health==0)
-													{
-														
-														zombieview[w].setImage(null);
-														smallimages[y][x-1].setImage(null);
-													}
-													//
-
-												}*/
-
-												//forpea[y][x-1].wait();
-												//if(zombieview[w].)
-												translate[w].setCycleCount(1);
-												translate[w].setNode(smallimages[y][x-1]);
-												translate[w].play();
-												//forpea[y][x-1].notifyAll();
-												
-											}
-											if(p==false)break;
-											w++;
-											
-										}
-										
-									}
-									catch(ArrayIndexOutOfBoundsException e)
-									{ 
-										tester.setText("plant cannot be put here");
-									}
-									catch(Exception e) {	}
-									
-									
-
-								}
-								
-							}));
-							forpea[y][x-1].setCycleCount(t1.INDEFINITE);
-							forpea[y][x-1].play();
-							}
-
+					int x=(int) ((event.getSceneX()-160)/80);
+					int y=(int) ((event.getSceneY()-80)/100);
+					try {
+						Image i=new Image(new FileInputStream("pea_shooter.gif"));
+						images[y][x-1].setImage(i);
+						images[y][x-1].setFitHeight(70);
+						peashooter.setDisable(true);
+						TimerTask tasknew =new helper(peashooter);
+						Timer timer=new Timer();
+						timer.schedule(tasknew,7000,17000);
 						
-							else
-							{
-								tester.setText("A Plant is already Planted");
+						forpea[y][x-1]=new Timeline(new KeyFrame(Duration.seconds(6), new EventHandler<ActionEvent>() {
+							@Override
+							public void handle(ActionEvent event) {
+								try
+								{
+									Image im=new Image(new FileInputStream("Pea.png"));
+									smallimages[y][x-1].setImage(im);
+									smallimages[y][x-1].setFitHeight(30); 	smallimages[y][x-1].setFitWidth(30);
+									Random rand=new Random();
+									int xy=rand.nextInt(200)+400;
+									smallimages[y][x-1].setImage(im);
+									smallimages[y][x-1].setLayoutY(images[y][x-1].getLayoutY()+80);
+									TranslateTransition translate=new TranslateTransition();
+									translate.setRate(0.001);
+									translate.setFromX(images[y][x-1].getLayoutX()+240);
+									translate.setByX(xy); 
+									translate.setDuration(Duration.millis(5));
+									translate.setCycleCount(1);
+									translate.setNode(smallimages[y][x-1]);
+									translate.play();	
+								}
+								catch(ArrayIndexOutOfBoundsException e)
+								{ 
+									tester.setText("plant cannot be put here");
+								}
+								catch(Exception e) {	}
 							}
-						}
-						catch (FileNotFoundException e) {	e.printStackTrace();	}
-						catch(ArrayIndexOutOfBoundsException e)
-						{
-							tester.setText("plant cannot be put here");
-						}
-					}
-
+						}));
+						forpea[y][x-1].setCycleCount(t1.INDEFINITE);
+						forpea[y][x-1].play();
+					} 
+					catch (FileNotFoundException e) {	e.printStackTrace();	}
 				}
 			});
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////		
-
 			wallnuticon =new Image(new FileInputStream("wallnuticon.png"));
 			wallnutview=new ImageView(wallnuticon);
 			wallnut=new Button();
-			wallnut.setOnAction(e->{});
 			wallnut.setGraphic(wallnutview);
 			wallnut.setLayoutX(14); 		wallnut.setLayoutY(158);
 			wallnutview.setFitHeight(56); 	wallnutview.setFitWidth(77);
@@ -820,13 +544,7 @@ public class Main extends Application {
 					}
 				}	
 			});
-			if(l.num<=2)
-			{
-				wallnut.setVisible(false);
-				wallnut.setDisable(true);
-			}
 ////////////////////////////////////////////////////////////////////////////////////////////////	
-
 			potatomineicon =new Image(new FileInputStream("potatomine.png"));
 			potatomineview=new ImageView(potatomineicon);
 			potatomine=new Button();
@@ -843,11 +561,6 @@ public class Main extends Application {
 					timer.schedule(tasknew,7000,7000);	
 				}
 			});
-			if(l.num<=3)
-			{
-				potatomine.setVisible(false);
-				potatomine.setDisable(true);
-			}
 ////////////////////////////////////////////////////////////////////////////////////////////////
 			scoreview=new ImageView(new Image(new FileInputStream("score.png")));
 			scoreview.setFitHeight(44); 	scoreview.setFitWidth(170);
@@ -867,7 +580,7 @@ public class Main extends Application {
 		}
 		finally
 		{
-			root.getChildren().addAll(imageview,shovel,menu,gameprogress,sunflower,peashooter,wallnut,potatomine,scoreview,sunpoint,gridpane,sunview,peaview,tester);
+			root.getChildren().addAll(imageview,shovel,menu,gameprogress,sunflower,peashooter,wallnut,potatomine,scoreview,sunpoint,gridpane,sunview,peaview,tester/*lawnmover[0],lawnmover[1],lawnmover[2],lawnmover[3],lawnmover[4]*/);
 			for(int i=0;i<5;i++)
 			{
 				for(int j=1;j<10;j++)
@@ -880,6 +593,6 @@ public class Main extends Application {
 		}
 	}
 	public static void main(String[] args) {
-		launch(args);//
+		launch(args);
 	}
 }
